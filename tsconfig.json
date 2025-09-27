@@ -16,7 +16,6 @@
     "noEmit": true,
     "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,
-    "incremental": true
   },
   "include": ["src/**/*.tsx"],
   "exclude": ["node_modules", "dist"]
