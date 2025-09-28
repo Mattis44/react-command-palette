@@ -1,0 +1,73 @@
+import React, { useState } from "react";
+
+import { defaultItemStyle } from "../../constants/defaultStyles";
+import { mergeStyle } from "../../utils/global";
+import { useCommandPalette } from "../../hooks/useCommandPalette";
+
+interface ItemProps {
+    icon?: React.ReactNode;
+    action?: () => void;
+    label: string;
+    helper?: string
+}
+
+export default function Item({
+    icon,
+    action,
+    label,
+    helper
+}: ItemProps) {
+    const [isHover, setIsHover] = useState(false);
+    const { options } = useCommandPalette();
+
+    return (
+        <div
+            style={mergeStyle({ ...defaultItemStyle, backgroundColor: isHover ? "var(--hover-bg, rgba(255,255,255,0.05)" : "transparent" }, options?.itemStyle)}
+            onMouseEnter={() => setIsHover(true)}
+            onMouseLeave={() => setIsHover(false)}
+            onClick={action}
+        >
+            <div
+                style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    gap: "0.6rem",
+                    paddingTop: "10px",
+                    paddingBottom: "10px",
+                    paddingLeft: "1rem"
+                }}
+            >
+                {icon && (
+                    <span
+                        style={{
+                            display: "flex",
+                            alignItems: "center",
+                        }}
+                    >
+                        {icon}
+                    </span>
+                )}
+                <span>
+                    {label}
+                </span>
+            </div>
+            {isHover && (
+                <span
+                    style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.4rem",
+                        flexWrap: "wrap",
+                        fontSize: "0.9rem",
+                        color: "var(--placeholder-color, #777)",
+                        lineHeight: 1.2,
+                        opacity: 1,
+                        paddingRight: "1rem"
+                    }}
+                >
+                    {helper}
+                </span>
+            )}
+        </div>
+    )
+}

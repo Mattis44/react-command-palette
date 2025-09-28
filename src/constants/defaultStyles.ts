@@ -33,3 +33,29 @@ export const defaultInputFieldStyle: CSSProperties = {
     padding: "0.75rem 0",
     fontFamily: "inherit"
 }
+
+export const defaultKbdStyle: CSSProperties = {
+    backgroundColor: "var(--kbd-bg, #2e2e2e)",
+    color: "var(--kbd-color, #f5f5f5)",
+    border: "1px solid var(--kbd-border, #3d3d3d)",
+    borderRadius: "6px",
+    fontFamily: "monospace",
+    fontSize: "0.85rem",
+    padding: "0 0.4rem",
+    lineHeight: 1.5,
+    display: "inline-block",
+    verticalAlign: "middle",
+    justifyContent: "center",
+    textAlign: "center"
+}
+
+
+export const defaultItemStyle: CSSProperties = {
+    borderRadius: "0.375rem",
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    cursor: "pointer",
+    transition: "background-color 0.15 ease",
+}

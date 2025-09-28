@@ -3,11 +3,13 @@ import type { CSSProperties } from "react";
 /** Base commands */
 export type Command = {
     id: string;
+    icon?: React.ReactNode;
     label: string;
     action?: () => void;
 
-    category?: string;
+    category: string;
     keywords?: string[];
+    helper?: string;
 };
 
 /**
@@ -29,6 +31,15 @@ export type CommandPaletteOptions = {
     listStyle?: CSSProperties;
     itemStyle?: CSSProperties;
     overlayStyle?: CSSProperties;
+
+    helper?: {
+        text: string; // Press
+        keys: string[]; // ["Enter"]
+        description: string; // To run a command
+
+        style?: CSSProperties;
+        keyStyle?: CSSProperties; // Main <kbd/> override
+    }[];
 };
 
 export type CommandPaletteContextValue = {

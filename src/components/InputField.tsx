@@ -49,7 +49,7 @@ export default function InputField({
                 }}
                 onClick={() => setQuery("")}
             >
-                {iconEnd ?? <XIcon />}
+                {query !== "" ? iconEnd ?? <XIcon /> : null}
             </div>
         </div>
     )

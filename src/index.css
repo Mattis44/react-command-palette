@@ -4,6 +4,8 @@
   --fg-color: #c9d1d9;
   --kbd-bg: #2e2e2e;
   --kbd-color: #f5f5f5;
+  --hover-bg: #161b22;
+  --placeholder-color: #8b949e;
 }
 
 @media (prefers-color-scheme: light) {
@@ -25,20 +27,6 @@
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
 }
 
-kbd {
-  background-color: var(--kbd-bg, #2e2e2e);
-  color: var(--kbd-color, #f5f5f5);
-  border: 1px solid var(--kbd-border, #3d3d3d);
-  border-radius: 6px;
-  font-family: monospace;
-  font-size: 0.85rem;
-  padding: 0 0.4rem;
-  line-height: 1.5;
-  display: inline-block;
-  vertical-align: middle;
-  justify-content: center;
-  text-align: center;
-}
 
 @media (min-width: 768px) {
   .command-palette-container {
