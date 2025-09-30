@@ -17,6 +17,6 @@
     "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,
   },
-  "include": ["src/**/*.tsx"],
+  "include": ["src/**/*.tsx", "src/hooks/useCommandPalette.ts", "src/types/palette.ts"],
   "exclude": ["node_modules", "dist"]
 }

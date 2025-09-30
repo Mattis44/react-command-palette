@@ -59,3 +59,11 @@ export const defaultItemStyle: CSSProperties = {
     cursor: "pointer",
     transition: "background-color 0.15 ease",
 }
+
+export const defaultCategoryItemStyle: CSSProperties = {
+    paddingBottom: "0.75rem",
+    marginBottom: "0.75rem",
+    marginLeft: "-1rem",
+    marginRight: "-1rem",
+    width: "calc(100% + 2rem)"
+}

@@ -12,6 +12,12 @@ export type Command = {
     helper?: string;
 };
 
+export type CommandSource =
+    | Command[]
+    | Promise<Command[]>
+    | (() => Promise<Command[]>)
+    | ((query: string) => Promise<Command[]>);
+
 /**
  * Represents the global commands configuration for the command palette.
  *
@@ -20,7 +26,7 @@ export type Command = {
 export type GlobalCommands = {
     shortcut: string;
     label?: string;
-    commands?: Command[];
+    commands: Omit<Command, "category">[];
     onTrigger?: () => void;
 }
 
@@ -28,8 +34,11 @@ export type CommandPaletteOptions = {
     containerStyle?: CSSProperties;
     containerInputFieldStyle?: CSSProperties
     inputFieldStyle?: CSSProperties;
+
     listStyle?: CSSProperties;
     itemStyle?: CSSProperties;
+    categoryItemStyle?: CSSProperties;
+
     overlayStyle?: CSSProperties;
 
     helper?: {
@@ -47,9 +56,10 @@ export type CommandPaletteContextValue = {
     open: () => void;
     close: () => void;
     toggle: () => void;
+    loading: boolean;
 
     commands: Command[];
-    globals?: GlobalCommands[];
+    globals?: GlobalCommands;
 
     options?: CommandPaletteOptions;
 

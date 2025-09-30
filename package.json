@@ -11,7 +11,10 @@
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
-    "prepare": "npm run build"
+    "prepare": "npm run build",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs"
   },
   "devDependencies": {
     "@eslint/js": "^9.36.0",
@@ -26,7 +29,8 @@
     "prettier": "^3.6.2",
     "tsup": "^8.5.0",
     "typescript": "^5.9.2",
-    "typescript-eslint": "^8.44.1"
+    "typescript-eslint": "^8.44.1",
+    "vitepress": "^2.0.0-alpha.12"
   },
   "dependencies": {
     "react": "^19.1.1",
