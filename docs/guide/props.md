@@ -1,45 +1,71 @@
 # Props
-Here is a list of all the props that can be used in the `PaletteCommandProvider` component
 
-## List of Props
-`*: Required`
+`CommandPaletteProvider` accepts a small set of props to configure shortcuts, provide commands, and customise the UI. This page summarises every option with defaults and usage notes.
 
-`?: Optional`
+## Component signature
 
-| Prop Name   | Type                                     | Default             | Description                                                                                                                                                                                         |
-| ----------- | ---------------------------------------- | ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `commands*` | `Command[]` | `() => Promise<Command[]>` | `[]`                | The main list of [commands](./commands.md) to display inside the palette. You can pass a static array or an async function that returns commands (with optional query filtering).                   |
-| `shortcut?` | `ShortcutValue`                          | `SHORTCUTS.COMMAND` | Defines the keyboard combination that opens the palette. You can use built-in shortcuts or define your own (e.g. `"Ctrl+Shift+K"`). See [Shortcuts](./shortcuts.md).                                |
-| `options?`  | `CommandPaletteOptions`                  | `{}`                | Customize layout, style, and helper hints. Includes keys like `containerStyle`, `inputFieldStyle`, and `helper`. See [Options](./options.md) for details.                                           |
-| `globals?`  | `GlobalCommands`                         | `undefined`         | Defines a **global mode**, triggered by a prefix (like `/` or `>`), that loads a static set of commands. The config also supports an `onTrigger` callback fired once each time the user enters global mode after the global commands replace the list. See [Commands](./commands.md#🌐-global-commands). |
-| `children*` | `React.ReactNode`                        | `undefined`         | The main application tree that should be wrapped by the provider. The palette will appear over this content when opened.                                                                            |
+```tsx
+<CommandPaletteProvider
+  commands={commands}
+  globals={globals}
+  options={options}
+  shortcut={SHORTCUTS.COMMAND}
+  apiRef={apiRef}
+>
+  {children}
+</CommandPaletteProvider>
+```
 
+## Prop reference
 
-::: warning 
-use `apiRef` prop only if you need to access the calendar API methods imperatively. Most use cases can be handled declaratively through props and callbacks.
-:::
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `commands` | [`CommandSource`](./commands.md#command-sources) | `[]` | Primary list of commands to render. Accepts an array, promise, or async function receiving the current query. |
+| `globals` | [`GlobalCommands`](./commands.md#global-commands) | `undefined` | Configure a prefixed “global mode” (e.g. `/` or `>`). When triggered, the palette swaps to these commands and fires the optional `onTrigger` callback once. |
+| `options` | [`CommandPaletteOptions`](./customize.md#options-structure) | `{}` | Inline style overrides and behavioural toggles (helpers, `closeOnSelect`, overlay styling, etc.). |
+| `shortcut` | [`ShortcutValue`](./shortcuts.md) | `SHORTCUTS.COMMAND` | Keyboard combo that toggles the palette. Accepts a preset or a `{ combo, display }` object. |
+| `apiRef` | `RefObject<CommandPaletteApi>` | `undefined` | Exposes the [imperative API](./api.md#methods) so you can open, close, or update the palette outside React state. The ref value is `null` until the provider mounts. |
+| `children` | `React.ReactNode` | **required** | Your application tree. The palette is rendered above these children when opened. |
 
-##  Usage Example
-```javascript
-import { FastCalendar } from "fast-react-calendar";
-import { useEvents, type CalendarEvent } from "fast-react-calendar";
+## Notes
 
-const fetchEvents = async (): Promise<CalendarEvent[]> => {
-    // Fetch events from an API or database
-    return events;
-};
-const { events, loading, error, refresh } = useEvents({ fetchEvents });
-const apiRef = useApiRef();
+- `commands` is optional — you can provide an empty array and dynamically add items later via `apiRef.current?.addCommands()`.
+- When both `commands` and `globals` are provided, global commands take precedence while the user types the configured prefix.
+- `options.closeOnSelect` defaults to `true`. Set it to `false` if you need to trigger multiple actions without closing the palette between selections.
+- Any shortcut registered by the provider also listens for `Escape` to close the palette and clear the query.
 
-return (
-    <FastCalendar
-        apiRef={apiRef}
-        events={events}
-        locale="fr-FR"
-        onAddEvent={(event) => console.log("Event added:", event)}
-        onDeleteEvent={(event) => console.log("Event deleted:", event)}
-        onUpdateEvent={(event) => console.log("Event updated:", event)}
-        dataState={{ loading, error, refresh }}
-    />
-);
+## Example
+
+```tsx
+import {
+  CommandPaletteProvider,
+  SHORTCUTS,
+  useApiRef,
+  type Command,
+} from "react-command-palette";
+
+const commands: Command[] = [
+  { id: "docs", label: "Open documentation", category: "Navigation" },
+  { id: "create", label: "Create issue", category: "Actions" },
+];
+
+export function AppShell({ children }: { children: React.ReactNode }) {
+  const apiRef = useApiRef();
+
+  return (
+    <CommandPaletteProvider
+      commands={commands}
+      shortcut={SHORTCUTS.COMMAND_P}
+      options={{
+        helper: [
+          { text: "Press", keys: ["Enter"], description: "to run command" },
+          { text: "Type", keys: ["/"], description: "for global mode" },
+        ],
+      }}
+      apiRef={apiRef}
+    >
+      {children}
+    </CommandPaletteProvider>
+  );
+}
 ```

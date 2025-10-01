@@ -1,179 +1,136 @@
-# Events
-Commands are the main point of your command palette, allowing you to display and interact with your items. Each command is represented as an object with specific properties.
+# Commands
 
-::: info Note
-when a command's `action` runs, the palette automatically closes. You can override this by setting [`closeOnSelect`](./customize.md#keeping-the-palette-open-after-selecting-a-command) to `false` in the `options` prop.
+Commands power the palette. Each command describes what should appear in the list (icon, label, helper text) and which action to run when selected. This guide covers the command shape, how to load them, and how global modes work.
+
+::: info
+When a command’s `action` completes, the palette closes automatically. Set [`options.closeOnSelect`](./customize.md#keeping-the-palette-open-after-selecting-a-command) to `false` if you want to keep it open.
 :::
 
-## Command Structure
-Commands are objects with the following structure:
+## Command structure
 
-```typescript
-type Command = {
-    id: string;
-    icon?: React.ReactNode;
-    label: string;
-    action?: () => void;
-    category: string;
-    keywords?: string[];
-    helper?: string;
+```ts
+import type { Command } from "react-command-palette";
+
+const command: Command = {
+  id: "open-settings",     // Unique identifier used as React key
+  icon: <SettingsIcon />,    // Optional React node rendered before the label
+  label: "Open Settings",   // Main text shown in the list
+  action: () => {},          // Invoked when the user selects the command
+  category: "Navigation",   // Group header used for sorting + separators
+  keywords: ["preferences"],// Extra search terms
+  helper: "⌘ ,",             // Optional hint rendered on the right
 };
 ```
 
-You can import the `Command` type from the library:
+All properties are optional except `id`, `label`, and `category`.
 
-```typescript
-import { type Command } from "react-command-palette";
-```
+## Command sources
 
-## Providing Commands
-You can pass your commands statically or dynamically (via API) to the CommandPaletteProvider.
+The `commands` prop accepts several shapes so you can keep data static, fetch it on demand, or resolve it later.
 
-### Static Commands
+| Type | Description |
+| --- | --- |
+| `Command[]` | Static list loaded on mount. |
+| `Promise<Command[]>` | Promise resolved once when the provider mounts. Useful for lazy imports. |
+| `() => Promise<Command[]>` | Async loader invoked immediately, without receiving the search query. |
+| `(query: string) => Promise<Command[]>` | Async loader invoked with the debounced search term. Ideal for API-backed search. |
 
-```javascript
-import { CommandPaletteProvider, SHORTCUTS, type Command } from "react-command-palette";
+When you provide an async function, it is called with the **debounced query** (300 ms) to prevent duplicate requests. The provider also caches the last query so it won’t refetch with the exact same term twice in a row.
+
+## Static example
+
+```tsx
+import { CommandPaletteProvider, type Command } from "react-command-palette";
 
 const commands: Command[] = [
   {
-    id: "1",
-    label: "Open Settings",
-    category: "Navigation",
-    action: () => alert("Settings opened"),
+    id: "new-project",
+    label: "Create project",
+    category: "Actions",
+    action: () => alert("Creating project"),
+    keywords: ["new", "add"],
   },
   {
-    id: "2",
-    label: "Create Project",
-    category: "Actions",
-    action: () => alert("New project created"),
-    keywords: ["new", "add"],
+    id: "goto-settings",
+    label: "Open settings",
+    category: "Navigation",
+    action: () => alert("Opening settings"),
+    helper: "S",
   },
 ];
 
-export default function App() {
+export function App() {
   return (
-    <CommandPaletteProvider commands={commands} shortcut={SHORTCUTS.COMMAND}>
-      <div>My App</div>
+    <CommandPaletteProvider commands={commands}>
+      <YourApp />
     </CommandPaletteProvider>
   );
 }
 ```
 
-### Async Commands
+## Async example
 
-The palette supports async loading of commands — perfect for fetching data from APIs.
-Your commands prop can be a function returning a Promise<Command[]>.
-
-```javascript
-async function fetchCommands(query: string): Promise<Command[]> {
-  // Optional query argument for filtering
-  const res = await fetch(`/api/commands?q=${query}`);
+```tsx
+async function fetchRemoteCommands(query: string) {
+  const res = await fetch(`/api/commands?q=${encodeURIComponent(query)}`);
   const data = await res.json();
 
-  return data.map((item: any) => ({
+  return data.items.map((item: any) => ({
     id: item.id,
-    label: item.name,
-    category: "API",
-    action: () => console.log("Selected:", item.name),
+    label: item.title,
+    category: item.group,
+    action: () => window.open(item.url, "_blank"),
   }));
 }
 
-<CommandPaletteProvider
-  commands={fetchCommands}
-  shortcut={SHORTCUTS.COMMAND}
-/>
+<CommandPaletteProvider commands={fetchRemoteCommands} />;
 ```
-> The palette automatically debounces API calls (default: 300ms) to prevent spam.
 
-### Helpers (Optional UI hints)
+> Errors thrown inside your loader are caught and logged as `[CommandPalette] load() failed` without breaking the app.
 
-Helpers let you display small tips below the search bar — for example keyboard hints or instructions.
+## Helpers (optional UI hints)
 
-```javascript
+Helpers display small tips below the search input (e.g. keyboard hints). Provide them via `options.helper`:
+
+```tsx
 <CommandPaletteProvider
   commands={commands}
-  shortcut={SHORTCUTS.COMMAND}
   options={{
     helper: [
-      {
-        text: "Press",
-        keys: ["Enter"],
-        description: "to run a command",
-      },
-      {
-        text: "Type",
-        keys: ["/"],
-        description: "to enter global mode",
-      },
+      { text: "Press", keys: ["Enter"], description: "to run a command" },
+      { text: "Type", keys: ["/"], description: "for global mode" },
     ],
   }}
 />
 ```
 
-### Global Commands
+## Global commands
 
-Global commands are special shortcuts triggered by a prefix like / or > — just like on GitHub.
+Global commands let you trigger a dedicated command set using a prefix such as `/`, `>`, or `?`. This behaves like GitHub’s global search.
 
-They allow you to define an alternative context, for example, “Search Users” or “Search Projects”.
-
-```javascript
+```tsx
 <CommandPaletteProvider
-  commands={fetchCommands}
+  commands={fetchRemoteCommands}
   globals={{
     shortcut: "/",
-    label: "Global Commands",
+    label: "Global commands",
     commands: [
-      {
-        id: "search-users",
-        label: "Search users",
-        category: "Global",
-        action: () => alert("Searching users..."),
-      },
-      {
-        id: "search-repos",
-        label: "Search repositories",
-        category: "Global",
-        action: () => alert("Searching repos..."),
-      },
+      { id: "search-users", label: "Search users", action: () => console.log("Users"), helper: "Enter" },
+      { id: "search-repos", label: "Search repositories", action: () => console.log("Repos") },
     ],
+    onTrigger: () => console.log("Entered global mode"),
   }}
-  shortcut={SHORTCUTS.COMMAND}
 />
 ```
 
-#### Query Behavior
+Behaviour notes:
 
-- The search is case-insensitive and matches both label and keywords.
-- Async command sources receive the debounced query.
-- When in global mode (/), the palette filters text after the shortcut, e.g. /user.
-- When the user enters global mode, the optional `globals.onTrigger` callback fires once (after the global command list replaces the current results) so you can track analytics or lazy-load related data.
+- The palette stays in global mode while the query starts with the prefix (e.g. `/users`).
+- `globals.onTrigger` fires **once** every time the user transitions into global mode. Use it to lazy-load data or track analytics.
+- Global commands inherit the `label` as their category so they group nicely in the list.
 
-## Example
+## Query behaviour
 
-```javascript
-import { CommandPaletteProvider, SHORTCUTS } from "react-command-palette";
-
-async function searchCommands(query: string) {
-  return [
-    { id: "1", label: `Search for "${query}"`, category: "Search", action: () => alert(query) },
-  ];
-}
-
-export default function App() {
-  return (
-    <CommandPaletteProvider
-      commands={searchCommands}
-      shortcut={SHORTCUTS.COMMAND}
-      globals={{
-        shortcut: "/",
-        label: "Global Search",
-        commands: [
-          { id: "global-users", label: "Search Users", category: "Global", action: () => alert("Users") },
-        ],
-      }}
-    >
-      <div>Type ⌘K or Ctrl+K to open the palette</div>
-    </CommandPaletteProvider>
-  );
-}
-```
+- Matching is case-insensitive and checks both `label` and `keywords`.
+- When using async loaders, the current debounced query is passed in, so you can filter server-side.
+- The palette displays “Loading commands…” while fetching initial data, and “Searching for …” while filtering an existing list.

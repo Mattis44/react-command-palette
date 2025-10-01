@@ -12,9 +12,10 @@ export default defineConfig({
     nav: [
       { text: 'Home', link: '/' },
       { text: 'Guide', link: '/guide/get-started' },
-      { text: 'v1.0.0-alpha', 
-      items: [
-            { text: 'Changelog', link: 'https://github.com/Mattis44/react-command-palette/blob/main/changelog.md' },
+      {
+        text: 'v1.0.0-alpha',
+        items: [
+          { text: 'Changelog', link: 'https://github.com/Mattis44/react-command-palette/blob/main/changelog.md' },
         ]
       }
     ],
@@ -23,20 +24,27 @@ export default defineConfig({
     },
 
     sidebar: [
-      { text: 'Introduction', items: [
-        {
-          text: 'Get Started',
-          link: '/guide/get-started',
-        },
-        {
-          text: 'Commands',
-          link: '/guide/commands',
-        },
-        {
-          text: 'Shortcuts',
-          link: '/guide/shortcuts',
-        },
-      ]},
+      {
+        text: 'Introduction',
+        items: [
+          {
+            text: 'Get Started',
+            link: '/guide/get-started',
+          },
+          {
+            text: 'Commands',
+            link: '/guide/commands',
+          },
+          {
+            text: 'Shortcuts',
+            link: '/guide/shortcuts',
+          },
+          {
+            text: 'Accessibility',
+            link: '/guide/accessibility',
+          },
+        ]
+      },
       {
         text: 'Advanced',
         items: [
@@ -45,7 +53,11 @@ export default defineConfig({
             link: '/guide/props',
           },
           {
-            text: 'Api',
+            text: 'Hooks',
+            link: '/guide/hooks',
+          },
+          {
+            text: 'API',
             link: '/guide/api',
           },
           {
@@ -57,7 +69,7 @@ export default defineConfig({
     ],
 
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/Mattis44/fast-react-calendar' }
+      { icon: 'github', link: 'https://github.com/Mattis44/react-command-palette' }
     ]
   }
 })

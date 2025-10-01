@@ -2,48 +2,87 @@
 outline: deep
 ---
 
-# Runtime API Examples
+# Examples
 
-This page demonstrates usage of some of the runtime APIs provided by VitePress.
+A few end-to-end examples showing how to compose the building blocks exposed by React Command Palette.
 
-The main `useData()` API can be used to access site, theme, and page data for the current page. It works in both `.md` and `.vue` files:
+## Basic palette with static commands
 
-```md
-<script setup>
-import { useData } from 'vitepress'
+```tsx
+import { CommandPaletteProvider, SHORTCUTS, type Command } from "react-command-palette";
 
-const { theme, page, frontmatter } = useData()
-</script>
+const commands: Command[] = [
+  { id: "docs", label: "Open documentation", category: "Navigation", action: () => window.open("/docs", "_self") },
+  { id: "create-issue", label: "Create issue", category: "Actions", action: () => console.log("Creating issue") },
+];
 
-## Results
-
-### Theme Data
-<pre>{{ theme }}</pre>
-
-### Page Data
-<pre>{{ page }}</pre>
-
-### Page Frontmatter
-<pre>{{ frontmatter }}</pre>
+export function App() {
+  return (
+    <CommandPaletteProvider commands={commands} shortcut={SHORTCUTS.COMMAND}>
+      <YourApp />
+    </CommandPaletteProvider>
+  );
+}
 ```
 
-<script setup>
-import { useData } from 'vitepress'
+## Async commands with helpers
 
-const { site, theme, page, frontmatter } = useData()
-</script>
+```tsx
+async function searchDocs(query: string) {
+  const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+  const data = await res.json();
 
-## Results
+  return data.results.map((result: any) => ({
+    id: result.id,
+    label: result.title,
+    category: result.section,
+    action: () => window.open(result.url, "_blank"),
+  }));
+}
 
-### Theme Data
-<pre>{{ theme }}</pre>
+<CommandPaletteProvider
+  commands={searchDocs}
+  options={{
+    helper: [
+      { text: "Use", keys: ["↑", "↓"], description: "to navigate" },
+      { text: "Press", keys: ["Enter"], description: "to run a command" },
+    ],
+  }}
+/>;
+```
 
-### Page Data
-<pre>{{ page }}</pre>
+## Global mode to jump between resources
 
-### Page Frontmatter
-<pre>{{ frontmatter }}</pre>
+```tsx
+<CommandPaletteProvider
+  commands={searchDocs}
+  globals={{
+    shortcut: ">",
+    label: "Jump to",
+    commands: [
+      { id: "goto-issues", label: "Issues", action: () => window.open("/issues", "_self") },
+      { id: "goto-pull-requests", label: "Pull requests", action: () => window.open("/pulls", "_self") },
+    ],
+  }}
+/>;
+```
 
-## More
+## Imperative control with `useApiRef`
 
-Check out the documentation for the [full list of runtime APIs](https://vitepress.dev/reference/runtime-api#usedata).
+```tsx
+import { CommandPaletteProvider, useApiRef } from "react-command-palette";
+
+function PaletteToggle() {
+  const apiRef = useApiRef();
+
+  return (
+    <CommandPaletteProvider commands={[]} apiRef={apiRef}>
+      <button type="button" onClick={() => apiRef.current?.open()}>
+        Open command palette
+      </button>
+    </CommandPaletteProvider>
+  );
+}
+```
+
+Combine these snippets with the guides in the sidebar to tailor the palette to your product.

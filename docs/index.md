@@ -3,9 +3,9 @@
 layout: home
 
 hero:
-  name: "React Command Palette."
-  text: "a fully customizable command palette for React"
-  tagline: "Get started with the most user-friendly command palette in a second."
+  name: "React Command Palette"
+  text: "A fully customizable command palette for React"
+  tagline: "Bring GitHub-style quick actions to your app in minutes."
   actions:
     - theme: brand
       text: Get started
@@ -16,22 +16,32 @@ hero:
 
 features:
   - title: Fast & Lightweight
-    details: Built for instant response — the palette opens and filters results in milliseconds, even with hundreds of commands. No unnecessary re-renders or heavy dependencies.
+    details: |
+      Built for instant response — the palette opens and filters results in milliseconds, even with hundreds of commands.
+      It ships with zero external UI dependencies and avoids unnecessary re-renders for snappy UX.
 
   - title: Fully Customizable
-    details: Control every part of the experience — from container layout and input styling to item rendering and helper hints. Override inline styles or use CSS variables for full theme flexibility.
+    details: |
+      Control every part of the experience — from container layout and input styling to item rendering and helper hints.
+      Override inline styles or use CSS variables for full theming flexibility.
 
   - title: Async & Dynamic Commands
-    details: Load commands from APIs or async sources on the fly. React Command Palette supports promises, debounced queries, and async filtering out of the box.
+    details: |
+      Load commands from APIs or async sources on the fly.
+      React Command Palette supports promises, debounced queries, and async filtering out of the box.
 
   - title: Global Shortcuts & Modes
-    details: Trigger special “modes” with custom shortcuts like “/” or “>”, just like GitHub’s command palette. Perfect for separating search contexts or adding quick actions.
+    details: |
+      Trigger special "modes" with custom prefixes like "/" or ">" to swap to a dedicated command set.
+      Perfect for separating search contexts or exposing quick actions.
 
   - title: Native React Integration
-    details: 100% React and TypeScript. State-driven, hook-based, and works seamlessly in modern SPAs or Next.js apps. Integrates cleanly with your existing context and routing logic.
+    details: |
+      Written in TypeScript and designed for React hooks.
+      Works seamlessly in modern SPAs, Next.js apps, and other frameworks thanks to SSR-safe guards.
 
   - title: Styled & Accessible by Default
-    details: Comes with a minimal, accessible default style — dark/light-ready, keyboard-friendly, and easy to theme. Use the provided CSS variables or your own design system for consistent UX.
-
+    details: |
+      Ships with an accessible dark/light baseline, keyboard navigation, and ARIA roles.
+      Use the provided CSS variables or override inline styles to match your design system.
 ---
-

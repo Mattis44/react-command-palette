@@ -2,7 +2,7 @@
 You can easily customize the look and feel of the Command Palette using the options prop.
 This prop accepts a CommandPaletteOptions object, which allows you to style every part of the palette — container, input field, items, categories, and more.
 
-The component is designed with inline style overrides in mind, meaning you can directly inject CSSProperties objects to change visuals without touching CSS files.
+The component is designed with inline style overrides in mind, meaning you can directly inject `CSSProperties` objects to change visuals without touching CSS files.
 
 ## Options Structure
 ```javascript
@@ -137,4 +137,22 @@ By default the palette closes immediately after executing a command. If you need
 ```
 
 When `closeOnSelect` is set to `false`, the command palette will remain visible after a command runs, allowing the user to trigger additional actions without reopening it.
+
+## CSS variables
+
+The default stylesheet exposes several CSS variables that you can override globally to match your brand colours. Add them to your global CSS (or within a theme provider) and the palette will pick them up automatically.
+
+```css
+:root {
+  --bg-color: #111827;
+  --border-color: #1f2937;
+  --fg-color: #f9fafb;
+  --hover-bg: rgba(59, 130, 246, 0.12);
+  --kbd-bg: #1f2937;
+  --kbd-color: #f9fafb;
+  --placeholder-color: #9ca3af;
+}
+```
+
+Use media queries (e.g. `prefers-color-scheme`) or class-based scoping to offer light/dark themes.
 
