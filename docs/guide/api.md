@@ -15,7 +15,7 @@ import {
   CommandPaletteProvider,
   useApiRef,
   type Command,
-} from "react-command-palette";
+} from "@mattis/react-command-palette";
 import { useEffect } from "react";
 
 const commands: Command[] = [

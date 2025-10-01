@@ -9,7 +9,7 @@ When a command’s `action` completes, the palette closes automatically. Set [`o
 ## Command structure
 
 ```ts
-import type { Command } from "react-command-palette";
+import type { Command } from "@mattis/react-command-palette";
 
 const command: Command = {
   id: "open-settings",     // Unique identifier used as React key
@@ -40,7 +40,7 @@ When you provide an async function, it is called with the **debounced query** (3
 ## Static example
 
 ```tsx
-import { CommandPaletteProvider, type Command } from "react-command-palette";
+import { CommandPaletteProvider, type Command } from "@mattis/react-command-palette";
 
 const commands: Command[] = [
   {
