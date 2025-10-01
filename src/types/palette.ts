@@ -22,6 +22,7 @@ export type CommandSource =
  * Represents the global commands configuration for the command palette.
  *
  * @property shortcut - The character that triggers the global command query (e.g. "/", ">", "@").
+ * @property onTrigger - Optional callback fired once each time the user enters global mode, after the palette swaps to the global command list.
  */
 export type GlobalCommands = {
     shortcut: string;

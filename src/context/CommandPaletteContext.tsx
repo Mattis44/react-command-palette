@@ -48,6 +48,7 @@ export const CommandPaletteProvider = forwardRef<CommandPaletteApi, CommandPalet
 
     const debouncedQuery = useDebounce(query, 300);
     const lastQueryRef = useRef("");
+    const lastGlobalTriggerRef = useRef<string | null>(null);
 
     useImperativeHandle(ref, () => ({
         open: () => setIsOpen(true),
@@ -86,6 +87,10 @@ export const CommandPaletteProvider = forwardRef<CommandPaletteApi, CommandPalet
             }
         };
     }, [apiRef, isOpen, query, commands, setQuery]);
+
+    useEffect(() => {
+        lastGlobalTriggerRef.current = null;
+    }, [globals?.shortcut]);
 
     useEffect(() => {
         const { combo } = shortcut;
@@ -134,9 +139,17 @@ export const CommandPaletteProvider = forwardRef<CommandPaletteApi, CommandPalet
                         category: globals.label ?? "Global Commands",
                     }))
                 );
+
+                if (lastGlobalTriggerRef.current !== globals.shortcut) {
+                    globals.onTrigger?.();
+                    lastGlobalTriggerRef.current = globals.shortcut;
+                }
+
                 setLoading(false);
                 return;
             }
+
+            lastGlobalTriggerRef.current = null;
 
             if (
                 typeof commandsSource === "function" &&

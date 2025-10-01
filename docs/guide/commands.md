@@ -142,6 +142,7 @@ They allow you to define an alternative context, for example, “Search Users”
 - The search is case-insensitive and matches both label and keywords.
 - Async command sources receive the debounced query.
 - When in global mode (/), the palette filters text after the shortcut, e.g. /user.
+- When the user enters global mode, the optional `globals.onTrigger` callback fires once (after the global command list replaces the current results) so you can track analytics or lazy-load related data.
 
 ## Example
 
