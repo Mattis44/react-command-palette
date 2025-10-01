@@ -1,92 +1,119 @@
 # Customize
-You can customize the `FastCalendar` component in several ways to fit your application's needs.
-::: danger IN PROGRESS
-This prop is still under development. Please wait for a pull request to be merged before using it.
-:::
-## Custom Components
-You can override the default components used in the calendar by providing a `components` prop. This allows you to customize the appearance and behavior of various parts of the calendar.
+You can easily customize the look and feel of the Command Palette using the options prop.
+This prop accepts a CommandPaletteOptions object, which allows you to style every part of the palette — container, input field, items, categories, and more.
+
+The component is designed with inline style overrides in mind, meaning you can directly inject CSSProperties objects to change visuals without touching CSS files.
+
+## Options Structure
 ```javascript
-import { FastCalendar, CalendarComponents } from "fast-react-calendar";
-import { MyCustomHeader } from "./MyCustomHeader";
-const customComponents: CalendarComponents = {
-    Header: MyCustomHeader,
-    // You can override other components as needed
-};
-const MyCalendar = () => {
-    return (
-        <FastCalendar
-            components={customComponents}
-            // other props...
-        />
-    );
-};
-```
-## Custom Styles
-You can customize the styles of the calendar using the `sx` prop, which accepts a style object compatible with MUI's styling system. This allows you to apply custom styles to the calendar and its components.
-```javascript
-const MyCalendar = () => {
-    return (
-        <FastCalendar
-            sx={{
-                // Custom styles here
-                backgroundColor: "lightblue",
-                "& .fast-calendar-header": {
-                    color: "darkblue",
-                },
-            }}
-            // other props...
-        />
-    );
+type CommandPaletteOptions = {
+  containerStyle?: CSSProperties;
+  containerInputFieldStyle?: CSSProperties;
+  inputFieldStyle?: CSSProperties;
+
+  listStyle?: CSSProperties;
+  itemStyle?: CSSProperties;
+  categoryItemStyle?: CSSProperties;
+
+  overlayStyle?: CSSProperties;
+
+  helper?: {
+    text: string;            // e.g. "Press"
+    keys: string[];          // e.g. ["Enter"]
+    description: string;     // e.g. "to run a command"
+    style?: CSSProperties;   // Custom style for the helper container
+    keyStyle?: CSSProperties; // Custom style for the <kbd> elements
+  }[];
 };
 ```
 
-## Custom Events
-You can customize how events are displayed in the calendar by providing a custom `EventComponent`. This component will receive the event data and can render it as needed.
+## Skeleton
+![Command Palette Skeleton](../public/doc_style.png)
+
+## Example Usage
+You can pass your customization directly through the options prop of the CommandPaletteProvider.
 ```javascript
-import { FastCalendar, CalendarEvent, CalendarEventComponent } from "fast-react-calendar";
-const MyCustomEvent: CalendarEventComponent = ({ event }) => {
-    return (
-        <div style={{ backgroundColor: event.color }}>
-            <strong>{event.title}</strong>
-            <p>{event.description}</p>
-        </div>
-    );
+import { CommandPaletteProvider, SHORTCUTS } from "react-command-palette";
+import SearchIcon from "./SearchIcon";
+
+const customOptions = {
+  containerStyle: {
+    backgroundColor: "#0d1117",
+    border: "1px solid #30363d",
+    borderRadius: "12px",
+    padding: "1rem",
+  },
+  containerInputFieldStyle: {
+    borderBottom: "1px solid #30363d",
+    padding: "0.5rem 1rem",
+  },
+  inputFieldStyle: {
+    color: "#fff",
+    fontSize: "1rem",
+    outline: "none",
+  },
+  itemStyle: {
+    padding: "0.75rem 1rem",
+    borderRadius: "8px",
+    cursor: "pointer",
+  },
+  categoryItemStyle: {
+    fontSize: "0.75rem",
+    color: "#aaa",
+    padding: "0.25rem 1rem",
+    textTransform: "uppercase",
+  },
+  helper: [
+    {
+      text: "Press",
+      keys: ["Enter"],
+      description: "to run a command",
+      style: { color: "#999", fontSize: "0.85rem" },
+      keyStyle: {
+        backgroundColor: "#1f6feb",
+        color: "white",
+        borderRadius: "4px",
+        padding: "2px 6px",
+      },
+    },
+  ],
 };
-const MyCalendar = () => {
-    return (
-        <FastCalendar
-            components={{ 
-                Event: MyCustomEvent 
-            }}
-            // other props...
-        />
-    );
-};
+
+export default function App() {
+  return (
+    <CommandPaletteProvider
+      shortcut={SHORTCUTS.COMMAND}
+      commands={[
+        { id: "1", label: "Say Hello", category: "General", action: () => alert("Hello!") },
+      ]}
+      options={customOptions}
+    >
+      <button onClick={() => console.log("Open with ⌘+K or Ctrl+K")}>Open Palette</button>
+    </CommandPaletteProvider>
+  );
+}
 ```
 
-## Custom Add Event Dialog
-You can customize the "Add Event" dialog by providing a custom `AddEventDialog` component. This allows you to change the form fields, layout, and styling of the dialog.
-```javascript
-import { FastCalendar, AddEventDialogComponent } from "fast-react-calendar";
-const MyCustomAddEventDialog: AddEventDialogComponent = ({ onClose, onAdd })
-=> {
-    return (
-        <div>
-            <h2>Add Custom Event</h2>
-            {/* Custom form fields here */}
-            <button onClick={onAdd}>Add Event</button>
-            <button onClick={onClose}>Cancel</button>
-        </div>
-    );
-};
-const MyCalendar = () => {
-    return (
-        <FastCalendar
-            components={{ 
-                AddEventDialog: MyCustomAddEventDialog,
-            }}
-            // other props...
-        />
-    );
-};
-```
+## Customizable Sections
+| Option                     | Description                                                                              |
+| -------------------------- | ---------------------------------------------------------------------------------------- |
+| `containerStyle`           | Styles the main wrapper of the command palette (positioned in the center of the screen). |
+| `containerInputFieldStyle` | Styles the section containing the search input and icons.                                |
+| `inputFieldStyle`          | Directly styles the text input (placeholder, font, colors…).                             |
+| `listStyle`                | Styles the list container that holds all commands.                                       |
+| `itemStyle`                | Styles each individual command item (hover, spacing, layout).                            |
+| `categoryItemStyle`        | Styles the category headers shown before each command group.                             |
+| `overlayStyle`             | Styles the background overlay that appears behind the command palette.                   |
+| `helper`                   | Defines helper hints (bottom text with keyboard keys like “Press ⏎ to confirm”).         |
+
+
+## Example Result
+With the example above, your palette will:
+
+- Use a dark GitHub-like theme.
+
+- Show a helper under the input: “Press ⏎ to run a command”.
+
+- Render items with rounded corners and soft spacing.
+
+- Use a styled input with white text and no borders.

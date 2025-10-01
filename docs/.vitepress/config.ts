@@ -44,10 +44,10 @@ export default defineConfig({
             text: 'Props',
             link: '/guide/props',
           },
-          // {
-          //   text: 'Api',
-          //   link: '/guide/api',
-          // },
+          {
+            text: 'Api',
+            link: '/guide/api',
+          },
           {
             text: 'Customize',
             link: '/guide/customize',
