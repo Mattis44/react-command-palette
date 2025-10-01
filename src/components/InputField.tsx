@@ -9,12 +9,14 @@ interface InputFieldProps {
     iconStart?: React.ReactNode;
     iconEnd?: React.ReactNode;
     placeholder?: string;
+    onKeyDown?: React.KeyboardEventHandler<HTMLInputElement>;
 }
 
 export default function InputField({
     iconStart,
     iconEnd,
-    placeholder
+    placeholder,
+    onKeyDown
 }: InputFieldProps) {
     const { options, query, setQuery } = useCommandPalette();
     return (
@@ -38,6 +40,7 @@ export default function InputField({
                 placeholder={placeholder || "Search..."}
                 value={query}
                 onChange={(e) => setQuery(e.currentTarget?.value)}
+                onKeyDown={onKeyDown}
             />
 
             <div

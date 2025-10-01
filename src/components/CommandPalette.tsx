@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 import { useCommandPalette } from "../hooks/useCommandPalette";
 import Container from "./Container";
@@ -9,11 +9,14 @@ import type { Command } from "../types/palette";
 import { mergeStyle } from "../utils/global";
 import { defaultCategoryItemStyle } from "../constants/defaultStyles";
 
-
-const no_commands_message = "It looks like you don't have any commands defined. Add some with the `commands` prop from `CommandPaletteProvider`.";
+const no_commands_message =
+    "It looks like you don't have any commands defined. Add some with the `commands` prop from `CommandPaletteProvider`.";
 
 export function CommandPalette() {
     const { commands, query, loading, options, globals } = useCommandPalette();
+
+    const [filteredCommands, setFilteredCommands] = useState<Command[]>(() => commands ?? []);
+    const [activeIndex, setActiveIndex] = useState<number>(() => (commands && commands.length > 0 ? 0 : -1));
 
     const normalizedQuery = useMemo(() => {
         if (globals && query.startsWith(globals.shortcut)) {
@@ -22,34 +25,82 @@ export function CommandPalette() {
         return query.trim().toLowerCase();
     }, [query, globals]);
 
-    const grouped = useMemo(() => {
+    useEffect(() => {
+        const availableCommands = commands ?? [];
         const q = normalizedQuery;
 
         const list = q
-            ? commands.filter(
-                (cmd) =>
-                    cmd.label.toLowerCase().includes(q) ||
-                    cmd.keywords?.some((kw) => kw.toLowerCase().includes(q))
-            )
-            : commands;
+            ? availableCommands.filter(
+                  (cmd) =>
+                      cmd.label.toLowerCase().includes(q) ||
+                      cmd.keywords?.some((kw) => kw.toLowerCase().includes(q))
+              )
+            : availableCommands;
 
-        return list.reduce<Record<string, Command[]>>((acc, cmd) => {
+        setFilteredCommands(list);
+        setActiveIndex(list.length > 0 ? 0 : -1);
+    }, [commands, normalizedQuery]);
+
+    const grouped = useMemo(() => {
+        return filteredCommands.reduce<Record<string, Command[]>>((acc, cmd) => {
             const cat = cmd.category || "Other";
             if (!acc[cat]) acc[cat] = [];
             acc[cat].push(cmd);
             return acc;
         }, {});
-    }, [commands, normalizedQuery]);
+    }, [filteredCommands]);
 
-    const entries = Object.entries(grouped);
+    const activateCommand = useCallback(
+        (index: number) => {
+            const command = filteredCommands[index];
+            if (!command) return;
 
+            command.action?.();
+        },
+        [filteredCommands]
+    );
 
+    const handleKeyDown = useCallback(
+        (event: React.KeyboardEvent<HTMLInputElement>) => {
+            if (event.key === "ArrowDown") {
+                event.preventDefault();
+                setActiveIndex((prev) => {
+                    if (filteredCommands.length === 0) return -1;
+                    if (prev === -1) return 0;
+
+                    const next = prev + 1;
+                    return next >= filteredCommands.length ? 0 : next;
+                });
+                return;
+            }
+
+            if (event.key === "ArrowUp") {
+                event.preventDefault();
+                setActiveIndex((prev) => {
+                    if (filteredCommands.length === 0) return -1;
+                    if (prev === -1) return filteredCommands.length - 1;
+
+                    const next = prev - 1;
+                    return next < 0 ? filteredCommands.length - 1 : next;
+                });
+                return;
+            }
+
+            if (event.key === "Enter") {
+                event.preventDefault();
+                activateCommand(activeIndex);
+            }
+        },
+        [activateCommand, activeIndex, filteredCommands.length]
+    );
+
+    const entries = useMemo(() => Object.entries(grouped), [grouped]);
 
     if (loading) {
         const trimmedQuery = query.trim();
         return (
             <Container>
-                <InputField />
+                <InputField onKeyDown={handleKeyDown} />
                 <Helper />
                 <div
                     style={{
@@ -58,9 +109,7 @@ export function CommandPalette() {
                         color: "var(--placeholder-color, #777)",
                     }}
                 >
-                    {trimmedQuery
-                        ? `Searching for “${trimmedQuery}”...`
-                        : "Loading commands..."}
+                    {trimmedQuery ? `Searching for “${trimmedQuery}”...` : "Loading commands..."}
                 </div>
             </Container>
         );
@@ -69,7 +118,7 @@ export function CommandPalette() {
     if (!commands || commands.length === 0) {
         return (
             <Container>
-                <InputField />
+                <InputField onKeyDown={handleKeyDown} />
                 <Helper />
                 <div
                     style={{
@@ -87,7 +136,7 @@ export function CommandPalette() {
     if (entries.length === 0) {
         return (
             <Container>
-                <InputField />
+                <InputField onKeyDown={handleKeyDown} />
                 <Helper />
                 <div
                     style={{
@@ -102,17 +151,22 @@ export function CommandPalette() {
         );
     }
 
+    let commandIndex = -1;
+
     return (
         <Container>
-            <InputField />
+            <InputField onKeyDown={handleKeyDown} />
             <Helper />
-            <div>
+            <div role="listbox">
                 {entries.map(([category, cmds], i) => {
                     const isLast = i === entries.length - 1;
                     return (
                         <div
                             key={category}
-                            style={mergeStyle({ ...defaultCategoryItemStyle, borderBottom: isLast ? "none" : "1px solid var(--border-color)" }, options?.categoryItemStyle)}
+                            style={mergeStyle(
+                                { ...defaultCategoryItemStyle, borderBottom: isLast ? "none" : "1px solid var(--border-color)" },
+                                options?.categoryItemStyle
+                            )}
                         >
                             <div
                                 style={{
@@ -121,17 +175,26 @@ export function CommandPalette() {
                                     color: "var(--placeholder-color, #999)",
                                     padding: "0.25rem 1rem",
                                     letterSpacing: "0.5px",
-                                    textAlign: "left"
+                                    textAlign: "left",
                                 }}
                             >
                                 {category}
                             </div>
 
-                            {cmds.map((c, i) => (
-                                <Item key={c.id ?? i} {...c} />
-                            ))}
+                            {cmds.map((c, index) => {
+                                commandIndex += 1;
+                                const globalIndex = commandIndex;
+                                return (
+                                    <Item
+                                        key={c.id ?? `${category}-${index}`}
+                                        {...c}
+                                        isActive={globalIndex === activeIndex}
+                                        onActivate={() => activateCommand(globalIndex)}
+                                    />
+                                );
+                            })}
                         </div>
-                    )
+                    );
                 })}
             </div>
         </Container>

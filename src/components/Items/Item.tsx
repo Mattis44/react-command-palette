@@ -8,24 +8,52 @@ interface ItemProps {
     icon?: React.ReactNode;
     action?: () => void;
     label: string;
-    helper?: string
+    helper?: string;
+    isActive?: boolean;
+    onActivate?: () => void;
 }
 
 export default function Item({
     icon,
     action,
     label,
-    helper
+    helper,
+    isActive = false,
+    onActivate,
 }: ItemProps) {
     const [isHover, setIsHover] = useState(false);
     const { options } = useCommandPalette();
 
+    const handleActivate = () => {
+        if (onActivate) {
+            onActivate();
+        } else {
+            action?.();
+        }
+    };
+
+    const backgroundColor = isActive
+        ? "var(--active-bg, rgba(59,130,246,0.15))"
+        : isHover
+            ? "var(--hover-bg, rgba(255,255,255,0.05))"
+            : "transparent";
+
     return (
         <div
-            style={mergeStyle({ ...defaultItemStyle, backgroundColor: isHover ? "var(--hover-bg, rgba(255,255,255,0.05))" : "transparent" }, options?.itemStyle)}
+            role="option"
+            aria-selected={isActive}
+            tabIndex={isActive ? 0 : -1}
+            style={mergeStyle({ ...defaultItemStyle, backgroundColor }, options?.itemStyle)}
             onMouseEnter={() => setIsHover(true)}
             onMouseLeave={() => setIsHover(false)}
-            onClick={action}
+            onClick={handleActivate}
+            onKeyDown={(event) => {
+                if (!isActive) return;
+                if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    handleActivate();
+                }
+            }}
         >
             <div
                 style={{
@@ -51,7 +79,7 @@ export default function Item({
                     {label}
                 </span>
             </div>
-            {isHover && (
+            {(isHover || isActive) && (
                 <span
                     style={{
                         display: "flex",
