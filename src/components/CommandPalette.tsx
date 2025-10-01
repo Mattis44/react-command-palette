@@ -13,7 +13,7 @@ const no_commands_message =
     "It looks like you don't have any commands defined. Add some with the `commands` prop from `CommandPaletteProvider`.";
 
 export function CommandPalette() {
-    const { commands, query, loading, options, globals } = useCommandPalette();
+    const { commands, query, loading, options, globals, close } = useCommandPalette();
 
     const [filteredCommands, setFilteredCommands] = useState<Command[]>(() => commands ?? []);
     const [activeIndex, setActiveIndex] = useState<number>(() => (commands && commands.length > 0 ? 0 : -1));
@@ -50,14 +50,16 @@ export function CommandPalette() {
         }, {});
     }, [filteredCommands]);
 
-    const activateCommand = useCallback(
-        (index: number) => {
-            const command = filteredCommands[index];
+    const runCommand = useCallback(
+        (command: Command | undefined) => {
             if (!command) return;
 
             command.action?.();
+            if (options?.closeOnSelect !== false) {
+                close();
+            }
         },
-        [filteredCommands]
+        [close, options?.closeOnSelect]
     );
 
     const handleKeyDown = useCallback(
@@ -88,10 +90,10 @@ export function CommandPalette() {
 
             if (event.key === "Enter") {
                 event.preventDefault();
-                activateCommand(activeIndex);
+                runCommand(filteredCommands[activeIndex]);
             }
         },
-        [activateCommand, activeIndex, filteredCommands.length]
+        [runCommand, activeIndex, filteredCommands]
     );
 
     const entries = useMemo(() => Object.entries(grouped), [grouped]);
@@ -189,7 +191,6 @@ export function CommandPalette() {
                                         key={c.id ?? `${category}-${index}`}
                                         {...c}
                                         isActive={globalIndex === activeIndex}
-                                        onActivate={() => activateCommand(globalIndex)}
                                     />
                                 );
                             })}

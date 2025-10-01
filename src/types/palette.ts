@@ -42,6 +42,8 @@ export type CommandPaletteOptions = {
 
     overlayStyle?: CSSProperties;
 
+    closeOnSelect?: boolean;
+
     helper?: {
         text: string; // Press
         keys: string[]; // ["Enter"]

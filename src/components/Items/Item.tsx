@@ -10,7 +10,6 @@ interface ItemProps {
     label: string;
     helper?: string;
     isActive?: boolean;
-    onActivate?: () => void;
 }
 
 export default function Item({
@@ -19,16 +18,16 @@ export default function Item({
     label,
     helper,
     isActive = false,
-    onActivate,
 }: ItemProps) {
     const [isHover, setIsHover] = useState(false);
-    const { options } = useCommandPalette();
+    const { options, close } = useCommandPalette();
+
+    const shouldCloseOnSelect = options?.closeOnSelect !== false;
 
     const handleActivate = () => {
-        if (onActivate) {
-            onActivate();
-        } else {
-            action?.();
+        action?.();
+        if (shouldCloseOnSelect) {
+            close();
         }
     };
 

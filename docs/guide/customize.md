@@ -17,6 +17,8 @@ type CommandPaletteOptions = {
 
   overlayStyle?: CSSProperties;
 
+  closeOnSelect?: boolean;
+
   helper?: {
     text: string;            // e.g. "Press"
     keys: string[];          // e.g. ["Enter"]
@@ -104,6 +106,7 @@ export default function App() {
 | `itemStyle`                | Styles each individual command item (hover, spacing, layout).                            |
 | `categoryItemStyle`        | Styles the category headers shown before each command group.                             |
 | `overlayStyle`             | Styles the background overlay that appears behind the command palette.                   |
+| `closeOnSelect`            | Controls whether the palette automatically closes after running a command (default: `true`). |
 | `helper`                   | Defines helper hints (bottom text with keyboard keys like “Press ⏎ to confirm”).         |
 
 
@@ -117,3 +120,21 @@ With the example above, your palette will:
 - Render items with rounded corners and soft spacing.
 
 - Use a styled input with white text and no borders.
+
+## Keeping the palette open after selecting a command
+
+By default the palette closes immediately after executing a command. If you need to run multiple actions in a row — for example when building a bulk-selection workflow — you can disable this behaviour with the `closeOnSelect` option.
+
+```tsx
+<CommandPaletteProvider
+  commands={commands}
+  options={{
+    closeOnSelect: false,
+  }}
+>
+  {children}
+</CommandPaletteProvider>
+```
+
+When `closeOnSelect` is set to `false`, the command palette will remain visible after a command runs, allowing the user to trigger additional actions without reopening it.
+

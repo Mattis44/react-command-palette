@@ -1,6 +1,10 @@
 # Events
 Commands are the main point of your command palette, allowing you to display and interact with your items. Each command is represented as an object with specific properties.
 
+::: info Note
+when a command's `action` runs, the palette automatically closes. You can override this by setting [`closeOnSelect`](./customize.md#keeping-the-palette-open-after-selecting-a-command) to `false` in the `options` prop.
+:::
+
 ## Command Structure
 Commands are objects with the following structure:
 
