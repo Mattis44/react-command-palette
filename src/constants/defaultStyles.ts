@@ -67,3 +67,16 @@ export const defaultCategoryItemStyle: CSSProperties = {
     marginRight: "-1rem",
     width: "calc(100% + 2rem)"
 }
+
+export const defaultOverlayStyle: CSSProperties = {
+    backgroundColor: "#21283066",
+    zIndex: 111,
+    position: "fixed",
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    display: "block",
+    cursor: "default",
+    content: " ",
+};

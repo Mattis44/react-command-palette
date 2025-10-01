@@ -1,7 +1,7 @@
 import React from "react";
 import { useCommandPalette } from "../hooks/useCommandPalette";
 import { mergeStyle } from "../utils/global";
-import { defaultContainerStyle } from "../constants/defaultStyles";
+import { defaultContainerStyle, defaultOverlayStyle } from "../constants/defaultStyles";
 
 export default function Container({
     children
@@ -14,18 +14,7 @@ export default function Container({
             {isOpen && (
                 <div
                     id="portal-container-command-palette"
-                    style={{
-                        backgroundColor: "#21283066",
-                        zIndex: 111,
-                        position: "fixed",
-                        top: 0,
-                        right: 0,
-                        bottom: 0,
-                        left: 0,
-                        display: "block",
-                        cursor: "default",
-                        content: " "
-                    }}
+                    style={mergeStyle(defaultOverlayStyle, options?.overlayStyle)}
                     onClick={close}
                 />
             )}

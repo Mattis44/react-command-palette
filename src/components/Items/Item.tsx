@@ -22,7 +22,7 @@ export default function Item({
 
     return (
         <div
-            style={mergeStyle({ ...defaultItemStyle, backgroundColor: isHover ? "var(--hover-bg, rgba(255,255,255,0.05)" : "transparent" }, options?.itemStyle)}
+            style={mergeStyle({ ...defaultItemStyle, backgroundColor: isHover ? "var(--hover-bg, rgba(255,255,255,0.05))" : "transparent" }, options?.itemStyle)}
             onMouseEnter={() => setIsHover(true)}
             onMouseLeave={() => setIsHover(false)}
             onClick={action}

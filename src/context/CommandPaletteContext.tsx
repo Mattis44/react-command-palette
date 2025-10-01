@@ -65,7 +65,7 @@ export const CommandPaletteProvider = forwardRef<CommandPaletteApi, CommandPalet
 
     useEffect(() => {
         if (!apiRef) return;
-        apiRef.current = {
+        const api: CommandPaletteApi = {
             open: () => setIsOpen(true),
             close: () => setIsOpen(false),
             toggle: () => setIsOpen(o => !o),
@@ -78,10 +78,14 @@ export const CommandPaletteProvider = forwardRef<CommandPaletteApi, CommandPalet
             logState: () =>
                 console.log("[CommandPalette] state", { isOpen, query, commands }),
         };
+
+        apiRef.current = api;
         return () => {
-            apiRef.current = null;
+            if (apiRef.current === api) {
+                apiRef.current = null;
+            }
         };
-    }, []);
+    }, [apiRef, isOpen, query, commands, setQuery]);
 
     useEffect(() => {
         const { combo } = shortcut;
@@ -123,8 +127,6 @@ export const CommandPaletteProvider = forwardRef<CommandPaletteApi, CommandPalet
         let isMounted = true;
 
         async function load() {
-            console.log(query.startsWith(globals?.shortcut || ""));
-
             if (globals && query.startsWith(globals.shortcut)) {
                 setCommands(
                     globals.commands.map((c) => ({

@@ -1,4 +1,6 @@
-const isMac = navigator.platform.toUpperCase().includes("MAC");
+const platform =
+  typeof navigator !== "undefined" ? navigator.platform.toUpperCase() : "";
+const isMac = platform.includes("MAC");
 
 export const SHORTCUTS = {
   COMMAND: isMac

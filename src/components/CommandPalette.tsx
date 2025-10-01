@@ -46,6 +46,7 @@ export function CommandPalette() {
 
 
     if (loading) {
+        const trimmedQuery = query.trim();
         return (
             <Container>
                 <InputField />
@@ -57,26 +58,9 @@ export function CommandPalette() {
                         color: "var(--placeholder-color, #777)",
                     }}
                 >
-                    Loading commands...
-                </div>
-            </Container>
-        );
-    }
-
-
-    if (loading && query.trim()) {
-        return (
-            <Container>
-                <InputField />
-                <Helper />
-                <div
-                    style={{
-                        padding: "1rem",
-                        textAlign: "center",
-                        color: "var(--placeholder-color, #777)",
-                    }}
-                >
-                    Searching for “{query}”...
+                    {trimmedQuery
+                        ? `Searching for “${trimmedQuery}”...`
+                        : "Loading commands..."}
                 </div>
             </Container>
         );

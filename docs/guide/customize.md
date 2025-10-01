@@ -28,7 +28,7 @@ type CommandPaletteOptions = {
 ```
 
 ## Skeleton
-![Command Palette Skeleton](../public/doc_style.png)
+![Command Palette Skeleton](/doc_style.png)
 
 ## Example Usage
 You can pass your customization directly through the options prop of the CommandPaletteProvider.
