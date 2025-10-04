@@ -1,0 +1,1 @@
+import{_ as i,c as a,o as t,ah as e}from"./chunks/framework.CxbIPHq9.js";const E=JSON.parse('{"title":"API","description":"","frontmatter":{},"headers":[],"relativePath":"guide/api.md","filePath":"guide/api.md"}'),n={name:"guide/api.md"};function l(h,s,p,k,d,r){return t(),a("div",null,[...s[0]||(s[0]=[e("",12)])])}const c=i(n,[["render",l]]);export{E as __pageData,c as default};
