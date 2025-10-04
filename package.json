@@ -1,22 +1,42 @@
 {
   "name": "@mattis/react-command-palette",
   "version": "0.1.0",
+  "description": "A flexible, accessible command palette component for React applications.",
+  "author": "Mattis",
+  "license": "MIT",
+
   "main": "dist/index.js",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
-  "files": [
-    "dist"
+
+  "files": ["dist", "README.md"],
+
+  "keywords": [
+    "react",
+    "command",
+    "palette",
+    "cmdk",
+    "shortcut",
+    "ctrl+k",
+    "github"
   ],
-  "keywords": ["react", "command", "palette", "cmdk", "shortcut", "ctrl+k", "github"],
+
   "type": "module",
+
   "scripts": {
-    "build": "tsup",
-    "dev": "tsup --watch",
+    "build": "tsup src/index.ts --dts",
+    "dev": "tsup src/index.ts --watch",
     "prepare": "npm run build",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs"
   },
+
+  "peerDependencies": {
+    "react": ">=18",
+    "react-dom": ">=18"
+  },
+
   "devDependencies": {
     "@eslint/js": "^9.36.0",
     "@types/react": "^19.1.14",
@@ -33,8 +53,8 @@
     "typescript-eslint": "^8.44.1",
     "vitepress": "^2.0.0-alpha.12"
   },
-  "dependencies": {
-    "react": "^19.1.1",
-    "react-dom": "^19.1.1"
+
+  "publishConfig": {
+    "access": "public"
   }
 }
