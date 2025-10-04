@@ -10,7 +10,7 @@ React Command Palette exposes two hooks:
 This hook returns the context value provided by `CommandPaletteProvider`.
 
 ```ts
-import { useCommandPalette } from "react-command-palette";
+import { useCommandPalette } from "@mattis/react-command-palette";
 
 const {
   isOpen,
@@ -39,7 +39,7 @@ Because the hook throws an error outside the provider, you’ll notice issues im
 `useApiRef` returns a `RefObject<CommandPaletteApi>` that you pass to the provider via the `apiRef` prop. The ref exposes the same methods documented on the [API page](./api.md#methods) and always stays up to date with the latest state.
 
 ```tsx
-import { CommandPaletteProvider, useApiRef, type Command } from "react-command-palette";
+import { CommandPaletteProvider, useApiRef, type Command } from "@mattis/react-command-palette";
 
 const commands: Command[] = [
   { id: "docs", label: "Open docs", category: "Navigation" },
