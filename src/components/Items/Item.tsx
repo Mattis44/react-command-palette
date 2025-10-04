@@ -7,7 +7,7 @@ import { useCommandPalette } from "../../hooks/useCommandPalette";
 interface ItemProps {
     icon?: React.ReactNode;
     action?: () => void;
-    label: string;
+    label: React.ReactNode;
     helper?: string;
     isActive?: boolean;
 }
