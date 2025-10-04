@@ -12,11 +12,11 @@ This guide walks you through installation, setup, and your first commands.
 Install the library via npm (or your favourite package manager):
 
 ```bash
-npm install @mattis/react-command-palette
+npm install @mattis44/react-command-palette
 # or
-pnpm add @mattis/react-command-palette
+pnpm add @mattis44/react-command-palette
 # or
-yarn add @mattis/react-command-palette
+yarn add @mattis44/react-command-palette
 ```
 
 ## Bootstrapping the provider
@@ -24,8 +24,8 @@ yarn add @mattis/react-command-palette
 Wrap your application with the `CommandPaletteProvider`. This registers the keyboard shortcut, renders the overlay, and provides context for the hooks.
 
 ```tsx
-import { CommandPaletteProvider, SHORTCUTS } from "@mattis/react-command-palette";
-import type { Command } from "@mattis/react-command-palette";
+import { CommandPaletteProvider, SHORTCUTS } from "@mattis44/react-command-palette";
+import type { Command } from "@mattis44/react-command-palette";
 
 const commands: Command[] = [
   {
@@ -83,7 +83,7 @@ The palette debounces calls by 300 ms and caches the last query to avoid firin
 Besides keyboard shortcuts, you can open or close the palette from anywhere using the `useCommandPalette` hook:
 
 ```tsx
-import { useCommandPalette } from "@mattis/react-command-palette";
+import { useCommandPalette } from "@mattis44/react-command-palette";
 
 function HeaderShortcut() {
   const { open } = useCommandPalette();

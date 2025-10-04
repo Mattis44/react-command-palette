@@ -1,4 +1,4 @@
-# @mattis/react-command-palette
+# @mattis44/react-command-palette
 
 A flexible, accessible command palette component for React applications. Provide instant keyboard-driven navigation, run custom actions, and surface global shortcuts with a single provider.
 
@@ -31,7 +31,7 @@ A flexible, accessible command palette component for React applications. Provide
 Install the package from npm:
 
 ```bash
-npm install @mattis/react-command-palette
+npm install @mattis44/react-command-palette
 ```
 
 This library follows React 19’s peer dependency requirements. Ensure your project already depends on `react` and `react-dom`.
@@ -39,7 +39,7 @@ This library follows React 19’s peer dependency requirements. Ensure your proj
 ## Quick Start
 
 ```tsx
-import { CommandPaletteProvider, SHORTCUTS, type Command } from "@mattis/react-command-palette";
+import { CommandPaletteProvider, SHORTCUTS, type Command } from "@mattis44/react-command-palette";
 
 const commands: Command[] = [
   {
@@ -73,7 +73,7 @@ Wrap your routes or layout with the provider to expose the palette. Users can op
 Commands are simple objects describing how each item should behave:
 
 ```ts
-import type { Command } from "@mattis/react-command-palette";
+import type { Command } from "@mattis44/react-command-palette";
 
 type Command = {
   id: string;
@@ -117,7 +117,7 @@ Use the `globals` prop to define prefix-driven modes, such as `/` to search acro
 Pass a `CommandPaletteOptions` object through the `options` prop to tweak the UI or behaviour. Every key accepts inline `CSSProperties` so you can integrate with your design system without maintaining extra CSS files.
 
 ```tsx
-import type { CommandPaletteOptions } from "@mattis/react-command-palette";
+import type { CommandPaletteOptions } from "@mattis44/react-command-palette";
 
 const options: CommandPaletteOptions = {
   containerStyle: {

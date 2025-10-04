@@ -42,7 +42,7 @@ import {
   SHORTCUTS,
   useApiRef,
   type Command,
-} from "@mattis/react-command-palette";
+} from "@mattis44/react-command-palette";
 
 const commands: Command[] = [
   { id: "docs", label: "Open documentation", category: "Navigation" },

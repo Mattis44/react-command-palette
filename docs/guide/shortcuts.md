@@ -7,7 +7,7 @@ Shortcuts define how users open the palette or trigger special modes. React Comm
 Import `SHORTCUTS` to access ready-to-use combinations. Each preset displays a macOS-friendly symbol but falls back to the Windows/Linux equivalent automatically.
 
 ```ts
-import { SHORTCUTS } from "@mattis/react-command-palette";
+import { SHORTCUTS } from "@mattis44/react-command-palette";
 
 SHORTCUTS.COMMAND         // ⌘K / Ctrl+K
 SHORTCUTS.COMMAND_P       // ⌘P / Ctrl+P
@@ -30,7 +30,7 @@ The provider automatically listens for `Escape` to close the palette and clear t
 You can supply your own shortcut by passing an object with two fields:
 
 ```ts
-import type { ShortcutValue } from "@mattis/react-command-palette";
+import type { ShortcutValue } from "@mattis44/react-command-palette";
 
 const myShortcut: ShortcutValue = {
   combo: "ctrl+shift+l", // actual keyboard event combo to listen for

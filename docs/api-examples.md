@@ -9,7 +9,7 @@ A few end-to-end examples showing how to compose the building blocks exposed by 
 ## Basic palette with static commands
 
 ```tsx
-import { CommandPaletteProvider, SHORTCUTS, type Command } from "@mattis/react-command-palette";
+import { CommandPaletteProvider, SHORTCUTS, type Command } from "@mattis44/react-command-palette";
 
 const commands: Command[] = [
   { id: "docs", label: "Open documentation", category: "Navigation", action: () => window.open("/docs", "_self") },
@@ -70,7 +70,7 @@ async function searchDocs(query: string) {
 ## Imperative control with `useApiRef`
 
 ```tsx
-import { CommandPaletteProvider, useApiRef } from "@mattis/react-command-palette";
+import { CommandPaletteProvider, useApiRef } from "@mattis44/react-command-palette";
 
 function PaletteToggle() {
   const apiRef = useApiRef();

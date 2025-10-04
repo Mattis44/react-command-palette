@@ -35,7 +35,7 @@ type CommandPaletteOptions = {
 ## Example Usage
 You can pass your customization directly through the options prop of the CommandPaletteProvider.
 ```javascript
-import { CommandPaletteProvider, SHORTCUTS } from "@mattis/react-command-palette";
+import { CommandPaletteProvider, SHORTCUTS } from "@mattis44/react-command-palette";
 import SearchIcon from "./SearchIcon";
 
 const customOptions = {
