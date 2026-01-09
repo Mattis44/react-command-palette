@@ -24,6 +24,8 @@
 | `globals` | [`GlobalCommands`](./commands.md#global-commands) | `undefined` | Configure a prefixed “global mode” (e.g. `/` or `>`). When triggered, the palette swaps to these commands and fires the optional `onTrigger` callback once. |
 | `options` | [`CommandPaletteOptions`](./customize.md#options-structure) | `{}` | Inline style overrides and behavioural toggles (helpers, `closeOnSelect`, overlay styling, etc.). |
 | `shortcut` | [`ShortcutValue`](./shortcuts.md) | `SHORTCUTS.COMMAND` | Keyboard combo that toggles the palette. Accepts a preset or a `{ combo, display }` object. |
+| `initialOpen` | `boolean` | `false` | Mount the palette open. Helpful for demos or tests. |
+| `renderPalette` | `boolean` | `true` | Render the built-in palette UI. Set `false` if you only need the context/API. |
 | `apiRef` | `RefObject<CommandPaletteApi>` | `undefined` | Exposes the [imperative API](./api.md#methods) so you can open, close, or update the palette outside React state. The ref value is `null` until the provider mounts. |
 | `children` | `React.ReactNode` | **required** | Your application tree. The palette is rendered above these children when opened. |
 
@@ -33,6 +35,7 @@
 - When both `commands` and `globals` are provided, global commands take precedence while the user types the configured prefix.
 - `options.closeOnSelect` defaults to `true`. Set it to `false` if you need to trigger multiple actions without closing the palette between selections.
 - Any shortcut registered by the provider also listens for `Escape` to close the palette and clear the query.
+ - Disable `renderPalette` when you want to reuse the context without the default overlay (e.g. headless rendering in tests).
 
 ## Example
 

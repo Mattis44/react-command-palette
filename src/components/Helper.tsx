@@ -3,7 +3,7 @@ import { useCommandPalette } from "../hooks/useCommandPalette";
 import { mergeStyle } from "../utils/global";
 import { defaultKbdStyle } from "../constants/defaultStyles";
 
-export default function Helper() {
+const Helper = React.memo(function Helper() {
     const { options } = useCommandPalette();
     const helper = options?.helper;
 
@@ -62,4 +62,6 @@ export default function Helper() {
             </div>
         </div>
     );
-}
+});
+
+export default Helper;

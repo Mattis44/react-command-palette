@@ -24,6 +24,16 @@ type CommandPaletteProviderProps = {
     options?: CommandPaletteOptions;
     shortcut?: ShortcutValue;
 
+    /**
+     * When true, the palette mounts in an open state. Useful for tests and playgrounds.
+     */
+    initialOpen?: boolean;
+
+    /**
+     * Render the default CommandPalette overlay managed by the provider. Disable to supply your own.
+     */
+    renderPalette?: boolean;
+
     apiRef?: React.RefObject<CommandPaletteApi | null>;
 };
 
@@ -37,18 +47,40 @@ export const CommandPaletteProvider = forwardRef<CommandPaletteApi, CommandPalet
 
     options = {},
     shortcut = SHORTCUTS.COMMAND, // default to Ctrl+K or Cmd+K
+    initialOpen = false,
+    renderPalette = true,
     apiRef
 }: CommandPaletteProviderProps, ref) => {
     const [commands, setCommands] = useState<Command[]>([]);
-    const [isOpen, setIsOpen] = useState<boolean>(false);
+    const [isOpen, setIsOpen] = useState<boolean>(initialOpen);
     const [loading, setLoading] = useState<boolean>(false);
     const [query, setQuery] = useState<string>("");
+    const [history, setHistory] = useState<string[]>([]);
 
     const inputId = "input-field-search-command-palette";
 
     const debouncedQuery = useDebounce(query, 300);
     const lastQueryRef = useRef("");
     const lastGlobalTriggerRef = useRef<string | null>(null);
+
+    const enableHistory = options.enableHistory ?? false;
+    const maxHistorySize = options.maxHistorySize ?? 8;
+
+    const addToHistory = React.useCallback((id: string) => {
+        if (!enableHistory) return;
+        setHistory((prev) => {
+            const next = [id, ...prev.filter((existing) => existing !== id)];
+            return next.slice(0, maxHistorySize);
+        });
+    }, [enableHistory, maxHistorySize]);
+
+    useEffect(() => {
+        if (!enableHistory) {
+            setHistory([]);
+            return;
+        }
+        setHistory((prev) => prev.slice(0, maxHistorySize));
+    }, [enableHistory, maxHistorySize]);
 
     useImperativeHandle(ref, () => ({
         open: () => setIsOpen(true),
@@ -61,7 +93,7 @@ export const CommandPaletteProvider = forwardRef<CommandPaletteApi, CommandPalet
         addCommands: (cmds) => setCommands(prev => [...prev, ...cmds]),
         clearCommands: () => setCommands([]),
         logState: () =>
-            console.log("[CommandPalette] state", { isOpen, query, commands }),
+            console.log("[CommandPalette] state", { isOpen, query, commands, history }),
     }));
 
     useEffect(() => {
@@ -77,7 +109,7 @@ export const CommandPaletteProvider = forwardRef<CommandPaletteApi, CommandPalet
             addCommands: (cmds) => setCommands(prev => [...prev, ...cmds]),
             clearCommands: () => setCommands([]),
             logState: () =>
-                console.log("[CommandPalette] state", { isOpen, query, commands }),
+                console.log("[CommandPalette] state", { isOpen, query, commands, history }),
         };
 
         apiRef.current = api;
@@ -131,51 +163,53 @@ export const CommandPaletteProvider = forwardRef<CommandPaletteApi, CommandPalet
     useEffect(() => {
         let isMounted = true;
 
-        async function load() {
+        const resolveCommands = async (): Promise<Command[]> => {
             if (globals && query.startsWith(globals.shortcut)) {
-                setCommands(
-                    globals.commands.map((c) => ({
-                        ...c,
-                        category: globals.label ?? "Global Commands",
-                    }))
-                );
-
                 if (lastGlobalTriggerRef.current !== globals.shortcut) {
                     globals.onTrigger?.();
                     lastGlobalTriggerRef.current = globals.shortcut;
                 }
 
-                setLoading(false);
-                return;
+                return globals.commands.map((c) => ({
+                    ...c,
+                    category: globals.label ?? "Global Commands",
+                }));
             }
 
             lastGlobalTriggerRef.current = null;
 
+            if (!commandsSource) return [];
+
+            if (typeof commandsSource === "object" && "kind" in commandsSource) {
+                if (commandsSource.kind === "static") return commandsSource.commands;
+                if (commandsSource.kind === "promise") return await commandsSource.promise;
+                if (commandsSource.kind === "async") return await commandsSource.loader(debouncedQuery);
+            }
+
+            if (Array.isArray(commandsSource)) return commandsSource;
+            if (typeof commandsSource === "function") return await commandsSource(debouncedQuery);
+            if ("then" in commandsSource) return await commandsSource;
+
+            return [];
+        };
+
+        async function load() {
             if (
                 typeof commandsSource === "function" &&
+                commandsSource.length > 0 &&
                 debouncedQuery === lastQueryRef.current &&
                 debouncedQuery.trim() !== ""
-            ) return;
+            ) {
+                // avoid duplicate call for same debounced query
+                return;
+            }
 
             lastQueryRef.current = debouncedQuery;
             setLoading(true);
 
             try {
-                if (typeof commandsSource === "function" && commandsSource.length > 0) {
-                    const result = await commandsSource(debouncedQuery);
-                    if (isMounted) setCommands(result);
-                }
-                else if (commandsSource && "then" in commandsSource) {
-                    const result = await commandsSource;
-                    if (isMounted) setCommands(result);
-                }
-                else if (typeof commandsSource === "function") {
-                    const result = await commandsSource(debouncedQuery);
-                    if (isMounted) setCommands(result);
-                }
-                else {
-                    setCommands(commandsSource ?? []);
-                }
+                const result = await resolveCommands();
+                if (isMounted) setCommands(result);
             } catch (err) {
                 console.error("[CommandPalette] load() failed:", err);
             } finally {
@@ -198,15 +232,17 @@ export const CommandPaletteProvider = forwardRef<CommandPaletteApi, CommandPalet
                 query,
                 loading,
                 globals,
+                history,
 
                 open: () => setIsOpen(true),
                 close: () => setIsOpen(false),
                 toggle: () => setIsOpen((o) => !o),
                 setQuery,
+                addToHistory,
             }}
         >
             {children}
-            {isOpen && (
+            {renderPalette !== false && isOpen && (
                 <CommandPalette />
             )}
         </CommandPaletteContext.Provider>

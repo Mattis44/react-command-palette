@@ -1,18 +1,45 @@
+.command-palette-container #command-palette-listbox {
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: var(--scrollbar-thumb, rgba(255,255,255,0.28)) var(--scrollbar-track, transparent);
+}
+.command-palette-container #command-palette-listbox::-webkit-scrollbar {
+  width: var(--scrollbar-width, 10px);
+}
+.command-palette-container #command-palette-listbox::-webkit-scrollbar-track {
+  background: var(--scrollbar-track, transparent);
+}
+.command-palette-container #command-palette-listbox::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb, rgba(255,255,255,0.18));
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+.command-palette-container #command-palette-listbox::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover, rgba(255,255,255,0.28));
+}
 :root {
   --bg-color: #0d1117;
   --border-color: #3d444d;
   --fg-color: #c9d1d9;
   --kbd-bg: #2e2e2e;
   --kbd-color: #f5f5f5;
-  --hover-bg: #161b22;
+  --hover-bg: rgba(255,255,255,0.06);
   --placeholder-color: #8b949e;
+  --accent-color: #8b5cf6;
+  --active-bg: rgba(139, 92, 246, 0.18);
+  --container-bg: rgba(13,17,23,0.85);
+  --overlay-bg: rgba(15,15,20,0.45);
 }
 
 @media (prefers-color-scheme: light) {
   :root {
-    --bg-color: #f5f5f5;
-    --border-color: #ccc;
-    --fg-color: #333;
+    --bg-color: #f7f7fb;
+    --border-color: #dcdce6;
+    --fg-color: #1f2937;
+    --hover-bg: rgba(0,0,0,0.04);
+    --active-bg: rgba(99, 102, 241, 0.16);
+    --container-bg: rgba(255,255,255,0.9);
+    --overlay-bg: rgba(200,200,210,0.35);
   }
 }
 
@@ -24,7 +51,15 @@
   z-index: 999;
   width: 90vw;
   max-width: 600px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+  border-radius: 16px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+}
+.command-palette-container input,
+.command-palette-container button,
+.command-palette-container kbd,
+.command-palette-container [role="option"] {
+  font-family: inherit;
 }
 
 
@@ -38,4 +73,26 @@
   .command-palette-container {
     max-width: 700px;
   }
+}
+
+.command-palette-container input::placeholder {
+  color: var(--placeholder-color);
+  opacity: 0.8;
+}
+
+.command-palette-container {
+  scroll-behavior: smooth;
+}
+.command-palette-container::-webkit-scrollbar {
+  width: 10px;
+}
+.command-palette-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+.command-palette-container::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.18);
+  border-radius: 8px;
+}
+.command-palette-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,255,255,0.28);
 }

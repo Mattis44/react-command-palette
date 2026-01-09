@@ -1,6 +1,6 @@
 {
   "name": "@mattis44/react-command-palette",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "A flexible, accessible command palette component for React applications.",
   "author": "Mattis",
   "license": "MIT",
@@ -22,9 +22,16 @@
   ],
   "type": "module",
   "scripts": {
-    "build": "tsup src/index.ts --dts",
-    "dev": "tsup src/index.ts --watch",
+    "build": "tsup --config tsup.config.ts",
+    "dev": "tsup --config tsup.config.ts --watch",
     "prepare": "npm run build",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest --coverage",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:debug": "playwright test --debug",
+    "dev:demo": "vite",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs"
@@ -35,19 +42,32 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.36.0",
+    "@playwright/test": "^1.57.0",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.1",
+    "@testing-library/user-event": "^14.6.1",
     "@types/react": "^19.1.14",
     "@types/react-dom": "^19.1.9",
+    "@vitejs/plugin-react": "^5.1.2",
+    "@vitest/coverage-v8": "^4.0.16",
+    "@vitest/ui": "^4.0.16",
     "eslint": "^9.36.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^5.2.0",
     "globals": "^16.4.0",
+    "happy-dom": "^20.1.0",
     "jiti": "^2.6.0",
+    "jsdom": "^27.4.0",
     "prettier": "^3.6.2",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
     "tsup": "^8.5.0",
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.44.1",
-    "vitepress": "^2.0.0-alpha.12"
+    "vite": "^7.3.1",
+    "vitepress": "^2.0.0-alpha.12",
+    "vitest": "^4.0.16"
   },
   "publishConfig": {
     "access": "public"
@@ -57,6 +77,20 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "require": "./dist/index.js"
-    }
+    },
+    "./core": {
+      "types": "./dist/core.d.ts",
+      "import": "./dist/core.js",
+      "require": "./dist/core.js"
+    },
+    "./hooks": {
+      "types": "./dist/hooks.d.ts",
+      "import": "./dist/hooks.js",
+      "require": "./dist/hooks.js"
+    },
+    "./style.css": "./dist/index.css"
+  },
+  "dependencies": {
+    "fuse.js": "^7.1.0"
   }
 }
