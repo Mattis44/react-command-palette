@@ -10,13 +10,17 @@ interface InputFieldProps {
     iconEnd?: React.ReactNode;
     placeholder?: string;
     onKeyDown?: React.KeyboardEventHandler<HTMLInputElement>;
+    activeDescendantId?: string;
+    hasResults?: boolean;
 }
 
-export default function InputField({
+const InputField = React.memo(function InputField({
     iconStart,
     iconEnd,
     placeholder,
-    onKeyDown
+    onKeyDown,
+    activeDescendantId,
+    hasResults = false
 }: InputFieldProps) {
     const { options, query, setQuery } = useCommandPalette();
     return (
@@ -35,6 +39,11 @@ export default function InputField({
 
             <input
                 id="input-field-search-command-palette"
+                role="combobox"
+                aria-expanded={hasResults}
+                aria-controls="command-palette-listbox"
+                aria-autocomplete="list"
+                aria-activedescendant={activeDescendantId || undefined}
                 style={mergeStyle(defaultInputFieldStyle, options?.inputFieldStyle)}
                 autoFocus
                 placeholder={placeholder || "Search..."}
@@ -56,4 +65,6 @@ export default function InputField({
             </div>
         </div>
     )
-}
+});
+
+export default InputField;

@@ -1,2 +1,11 @@
 node_modules
 dist
+
+coverage/
+.nyc_output
+
+test-results/
+playwright-report/
+playwright/.cache/
+
+.vitest/

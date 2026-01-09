@@ -10,21 +10,45 @@ type CommandPaletteOptions = {
   containerStyle?: CSSProperties;
   containerInputFieldStyle?: CSSProperties;
   inputFieldStyle?: CSSProperties;
-
   listStyle?: CSSProperties;
-  itemStyle?: CSSProperties;
-  categoryItemStyle?: CSSProperties;
-
   overlayStyle?: CSSProperties;
 
+  itemStyle?: CSSProperties;
+  itemHoverStyle?: CSSProperties;
+  itemActiveStyle?: CSSProperties;
+  categoryItemStyle?: CSSProperties;
+  highlightStyle?: CSSProperties;
+
   closeOnSelect?: boolean;
+  maxResults?: number;
+  fuzzySearch?: {
+    threshold?: number;
+    minMatchCharLength?: number;
+  };
+  emptyState?: ReactNode | ((query: string) => ReactNode);
+
+  listScrollbar?: {
+    width?: number | string;
+    thumbColor?: string;
+    thumbHoverColor?: string;
+    trackColor?: string;
+  };
+
+  animations?: {
+    enabled?: boolean;
+    durationMs?: number;
+    easing?: string;
+  };
+
+  enableHistory?: boolean;
+  maxHistorySize?: number;
 
   helper?: {
-    text: string;            // e.g. "Press"
-    keys: string[];          // e.g. ["Enter"]
-    description: string;     // e.g. "to run a command"
-    style?: CSSProperties;   // Custom style for the helper container
-    keyStyle?: CSSProperties; // Custom style for the <kbd> elements
+    text: string;
+    keys: string[];
+    description: string;
+    style?: CSSProperties;
+    keyStyle?: CSSProperties;
   }[];
 };
 ```
@@ -97,17 +121,28 @@ export default function App() {
 ```
 
 ## Customizable Sections
-| Option                     | Description                                                                              |
-| -------------------------- | ---------------------------------------------------------------------------------------- |
-| `containerStyle`           | Styles the main wrapper of the command palette (positioned in the center of the screen). |
-| `containerInputFieldStyle` | Styles the section containing the search input and icons.                                |
-| `inputFieldStyle`          | Directly styles the text input (placeholder, font, colors…).                             |
-| `listStyle`                | Styles the list container that holds all commands.                                       |
-| `itemStyle`                | Styles each individual command item (hover, spacing, layout).                            |
-| `categoryItemStyle`        | Styles the category headers shown before each command group.                             |
-| `overlayStyle`             | Styles the background overlay that appears behind the command palette.                   |
-| `closeOnSelect`            | Controls whether the palette automatically closes after running a command (default: `true`). |
-| `helper`                   | Defines helper hints (bottom text with keyboard keys like “Press ⏎ to confirm”).         |
+| Option | Description |
+| --- | --- |
+| `containerStyle` | Styles the main wrapper of the command palette (center dialog). |
+| `containerInputFieldStyle` | Styles the header containing the search input and icons. |
+| `inputFieldStyle` | Directly styles the text input (placeholder, font, colors). |
+| `listStyle` | Styles the list container that holds all commands. |
+| `itemStyle` | Base style for each command item. |
+| `itemHoverStyle` | Style applied when hovering an item. |
+| `itemActiveStyle` | Style applied when an item is active/selected. |
+| `categoryItemStyle` | Styles the category headers shown before each command group. |
+| `highlightStyle` | Style applied to `<mark>` highlights in matched text. |
+| `overlayStyle` | Styles the background overlay behind the palette. |
+| `closeOnSelect` | Whether the palette closes after running a command (default: `true`). |
+| `enableHistory` | Store recently executed commands and surface them when the query is empty. |
+| `maxHistorySize` | Maximum recent commands kept (default: 8). |
+| `maxResults` | Limit how many results are shown after filtering. |
+| `fuzzySearch.threshold` | Tune fuzzy matching strictness (lower = stricter). |
+| `fuzzySearch.minMatchCharLength` | Minimum characters required for a match. |
+| `emptyState` | Custom empty content or `(query) => ReactNode` when nothing matches. |
+| `listScrollbar.*` | Width/thumb/track colours for the list scrollbar via CSS vars. |
+| `animations.*` | Enable/disable and tune open/close animation duration + easing. |
+| `helper` | Helper hints under the input (text + key badges). |
 
 
 ## Example Result
@@ -120,6 +155,63 @@ With the example above, your palette will:
 - Render items with rounded corners and soft spacing.
 
 - Use a styled input with white text and no borders.
+
+## Bundle size tips
+- Default imports pull the base CSS automatically. If you want to control when CSS is loaded, swap to the lean entry and import styles once in your app shell:
+
+```tsx
+import "@mattis44/react-command-palette/style.css";
+import { CommandPaletteProvider, useApiRef } from "@mattis44/react-command-palette/core";
+```
+
+- For tree-shaken hook usage without UI code, import directly from the hooks entry:
+
+```tsx
+import { useCommandPalette, useApiRef } from "@mattis44/react-command-palette/hooks";
+```
+
+- Keep inline overrides minimal and prefer CSS (variables or your own stylesheet) for shared styling to reduce repeated inline objects.
+
+## Highlighting matches
+Matched characters are wrapped in `<mark>` tags. Override them with `highlightStyle`:
+
+```tsx
+options={{
+  highlightStyle: { background: "transparent", color: "#7c3aed", fontWeight: 700 },
+}}
+```
+
+When fuzzy search is disabled, highlighting falls back to a simple substring match.
+
+## Animations
+Open/close animations are on by default. Tune or disable them:
+
+```tsx
+options={{
+  animations: {
+    enabled: true,
+    durationMs: 220,
+    easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+  },
+}}
+```
+
+Set `enabled: false` for instant rendering (handy in tests or perf-sensitive flows).
+
+## Custom empty state
+Provide a node or a function that receives the current query:
+
+```tsx
+options={{
+  emptyState: (query) => (
+    <div style={{ padding: "1rem" }}>
+      No matches for <strong>{query || "your search"}</strong>. Try shorter keywords.
+    </div>
+  ),
+}}
+```
+
+If omitted, the palette shows a default message that includes the current query.
 
 ## Keeping the palette open after selecting a command
 
